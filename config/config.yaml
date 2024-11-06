@@ -1,0 +1,7 @@
+env: "dev"
+api_gateway:
+  http_address: "0.0.0.0:8000"
+grpc:
+  grpc_address: "0.0.0.0:5300"
+kafka:
+  kafka_broker_address: "0.0.0.0:9092"

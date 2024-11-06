@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+option go_package = "auth/pkg/auth";
+
+// import "google/protobuf/struct.proto";
+
+service Auth {
+    rpc Login(LoginRequest) returns (LoginResponse) {}
+    rpc Registration(RegistrationRequest) returns (RegistrationResponse) {}
+    rpc CheckToken(CheckTokenRequest) returns (EmptyResponse) {}
+    rpc CheckRole(CheckRoleRequest) returns (CheckRoleResponse) {}
+}
+
+message LoginRequest {
+    string username = 1 [ json_name = "username" ];
+    string password = 2 [ json_name = "password" ];
+}
+
+message RegistrationRequest {
+    string username = 1 [ json_name = "username" ];
+    string firstName = 2 [ json_name = "firstName" ];
+    string lastName = 3 [ json_name = "lastName" ];
+    string email = 4 [ json_name = "email" ];
+    string password = 5 [ json_name = "password" ];
+}
+
+message CheckTokenRequest {
+    string token = 1 [ json_name = "token"];
+}
+
+message CheckRoleRequest {
+    string token = 1 [ json_name = "token"];
+}
+
+message LoginResponse {
+    string token = 1 [ json_name = "token"];
+}
+
+message RegistrationResponse {
+    string token = 1 [ json_name = "token"];
+}
+
+message CheckRoleResponse {
+    string role = 1 [ json_name = "role"];
+}
+
+message EmptyResponse {
+}
+
+
+
+// message NullableString {
+//     oneof kind {
+//       google.protobuf.NullValue null = 1;
+//       string data = 2;
+//     }
+// }

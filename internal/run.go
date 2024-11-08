@@ -36,7 +36,7 @@ func Run() {
 
 	wg.Add(1)
 	log.Info("Starting server ...")
-	server := my_grpc.New(log, cfg)
+	server := my_grpc.New(log, cfg, storage)
 	go startServer(ctx, wg, server) 
 
 	<-ctx.Done()

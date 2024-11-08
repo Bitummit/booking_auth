@@ -44,7 +44,7 @@ func (s *Storage) CreateUser(ctx context.Context, user models.User) (int64, erro
 	args := pgx.NamedArgs{
 		"username": user.Username,
 	}
-	resp, err := s.DB.Exec(ctx, InsertUserStmt, args)
+	resp, err := s.DB.Exec(ctx, GetUserByName, args)
 	if err != nil {
 		return 0, fmt.Errorf("checking user: unknown error %w", err)
 	}

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 
 	"github.com/Bitummit/booking_auth/internal/models"
+	authService "github.com/Bitummit/booking_auth/internal/service"
 	"github.com/Bitummit/booking_auth/internal/storage/postgresql"
 	"github.com/Bitummit/booking_auth/pkg/config"
 	"github.com/Bitummit/booking_auth/pkg/logger"
@@ -25,21 +26,21 @@ type (
 	}
 
 	Service interface {
-		CheckTokenUser(token string) error
-		CheckRoleUser(token string) (string, error)
-		LoginUser(cusername string, password string) (*string, error)
+		// CheckTokenUser(token string) error
+		// CheckRoleUser(token string) (string, error)
+		// LoginUser(cusername string, password string) (*string, error)
 		RegistrateUser(ctx context.Context, user models.User) (string, error)
 	}
 )
 
 
-func New(log *slog.Logger, cfg *config.Config) *AuthServer {
-	//init here service
+func New(log *slog.Logger, cfg *config.Config, storage authService.Storage) *AuthServer {
+	service := authService.New(storage)
 
 	return &AuthServer{
 		Cfg: cfg,
 		Log: log,
-		// Service: service,
+		Service: service,
 	}
 }
 
@@ -59,9 +60,8 @@ func (a *AuthServer) Registration(ctx context.Context, req *auth.RegistrationReq
 		}
 		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
 	}
-	
-	response := auth.RegistrationResponse{
+	response := &auth.RegistrationResponse{
 		Token: token,
 	}
-	return &response, nil
+	return response, nil
 }

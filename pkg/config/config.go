@@ -22,7 +22,7 @@ type (
 	}
 
 	GrpcServer struct {
-		GrpcAddress string `yaml:"grpc_address" env-default:"0.0.0.0:5400"`
+		GrpcAddress string `yaml:"grpc_address"`
 	}
 
 	KafkaServer struct {

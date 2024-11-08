@@ -16,8 +16,8 @@ type Service struct {
 
 type Storage interface {
 	CreateUser(ctx context.Context, user models.User) (int64, error)
-	GetUser(ctx context.Context, username string) (*models.User, error)
-	SetUserRole(ctx context.Context, user models.User) error
+	// GetUser(ctx context.Context, username string) (*models.User, error)
+	// SetUserRole(ctx context.Context, user models.User) error
 }
 
 var ErrorHashingPassword = errors.New("error while hashing password")
@@ -35,13 +35,11 @@ func (s *Service) RegistrateUser(ctx context.Context, user models.User) (string,
 		return "", fmt.Errorf("generating password: %w", ErrorHashingPassword)
 	}
 	user.PasswordHashed = hashedPass
-
 	id, err := s.Storage.CreateUser(ctx, user)
 	if err != nil {
 		return "", fmt.Errorf("registration user: %w", err)
 	}
 	user.Id = id
-
 	token, err := my_jwt.NewToken(user)
 	if err != nil {
 		return "", fmt.Errorf("registration user: %w", err)

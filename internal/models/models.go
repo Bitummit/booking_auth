@@ -15,6 +15,7 @@ type User struct {
 	Email string
 	Password string
 	PasswordHashed []byte
+	Role string
 }
 
 type Token struct {

@@ -40,6 +40,7 @@ func (s *Service) RegistrateUser(ctx context.Context, user models.User) (string,
 		return "", fmt.Errorf("registration user: %w", err)
 	}
 	user.Id = id
+	
 	token, err := my_jwt.NewToken(user)
 	if err != nil {
 		return "", fmt.Errorf("registration user: %w", err)

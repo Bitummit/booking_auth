@@ -45,12 +45,14 @@ func New(log *slog.Logger, cfg *config.Config, storage authService.Storage) *Aut
 }
 
 func (a *AuthServer) Registration(ctx context.Context, req *auth.RegistrationRequest) (*auth.RegistrationResponse, error)  {
+	// register client
 	user := models.User{
 		Username: req.GetUsername(),
 		Password: req.GetPassword(),
 		Email: req.GetEmail(),
 		FirstName: req.GetFirstName(),
 		LastName: req.GetLastName(),
+		Role: "client",
 	}
 	token, err := a.Service.RegistrateUser(ctx, user)
 	if err != nil {

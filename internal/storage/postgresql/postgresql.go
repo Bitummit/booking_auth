@@ -46,7 +46,7 @@ func (s *Storage) CreateUser(ctx context.Context, user models.User) (int64, erro
 	}
 	resp, err := s.DB.Exec(ctx, InsertUserStmt, args)
 	if err != nil {
-		return 0, fmt.Errorf("checking user: unknown error %w", ErrorUserExists)
+		return 0, fmt.Errorf("checking user: unknown error %w", err)
 	}
 	if resp.RowsAffected() != 0 {
 		return 0, fmt.Errorf("inserting user: %w", ErrorUserExists)
@@ -60,7 +60,7 @@ func (s *Storage) CreateUser(ctx context.Context, user models.User) (int64, erro
 	}
 	err = s.DB.QueryRow(ctx, InsertUserStmt, args).Scan(&id)
 	if err != nil {
-		return 0, fmt.Errorf("inserting user: unknown error %w", ErrorUserExists)
+		return 0, fmt.Errorf("inserting user: unknown error %w", err)
 	}
 
 	return id, nil

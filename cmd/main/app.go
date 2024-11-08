@@ -1,8 +1,6 @@
 package main
 
-import (
-	run "github.com/Bitummit/go_auth/internal"
-)
+import run "github.com/Bitummit/booking_auth/internal"
 
 
 func main() {

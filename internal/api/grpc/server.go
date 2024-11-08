@@ -26,22 +26,22 @@ type (
 		CheckTokenUser(token string) error
 		CheckRoleUser(token string) (string, error)
 		LoginUser(cusername string, password string) (*string, error)
-		RegisterUser(ctx context.Context, user models.User) (string, error)
+		RegistrateUser(ctx context.Context, user models.User) (string, error)
 	}
 )
 
 
-func New(log *slog.Logger, cfg *config.Config, service Service) *AuthServer {
+func New(log *slog.Logger, cfg *config.Config) *AuthServer {
 	//init here service
 
 	return &AuthServer{
 		Cfg: cfg,
 		Log: log,
-		Service: service,
+		// Service: service,
 	}
 }
 
-func (a *AuthServer) Register(ctx context.Context, req *auth.RegistrationRequest) (*auth.RegistrationResponse, error)  {
+func (a *AuthServer) Registration(ctx context.Context, req *auth.RegistrationRequest) (*auth.RegistrationResponse, error)  {
 	user := models.User{
 		Username: req.GetUsername(),
 		Password: req.GetPassword(),
@@ -49,7 +49,7 @@ func (a *AuthServer) Register(ctx context.Context, req *auth.RegistrationRequest
 		FirstName: req.GetFirstName(),
 		LastName: req.GetLastName(),
 	}
-	token, err := a.Service.RegisterUser(ctx, user)
+	token, err := a.Service.RegistrateUser(ctx, user)
 	if err != nil {
 		a.Log.Error("error while register user:", logger.Err(err))
 		// if errors.Is(err, postgresql.ErrorUserExists) || errors.Is(err, auth.ErrorHashingPassword){

@@ -2,16 +2,18 @@ package run
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"os/signal"
 	"sync"
 
 	"syscall"
 
+	my_grpc "github.com/Bitummit/booking_auth/internal/api/grpc"
 	"github.com/Bitummit/booking_auth/internal/storage/postgresql"
 	"github.com/Bitummit/booking_auth/pkg/config"
 	"github.com/Bitummit/booking_auth/pkg/logger"
+	auth "github.com/Bitummit/booking_auth/pkg/proto"
+	"google.golang.org/grpc"
 )
 
 
@@ -49,12 +51,12 @@ func startServer(ctx context.Context, wg *sync.WaitGroup, server *my_grpc.AuthSe
 		server.Log.Error("failed to listen", logger.Err(err))
 	}
 	opts := []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(
-			interceptors.UnaryLogRequest(server.Log),
-		),
+		// grpc.ChainUnaryInterceptor(
+		// 	interceptors.UnaryLogRequest(server.Log),
+		// ),
 	}
 	grpcServer := grpc.NewServer(opts...)
-	auth_proto.RegisterAuthServer(grpcServer, server)
+	auth.RegisterAuthServer(grpcServer, server)
 
 	go func() {
 		if err = grpcServer.Serve(listener); err != nil {

@@ -67,10 +67,9 @@ func (s *Storage) CreateUser(ctx context.Context, user models.User) (int64, erro
 	return id, nil
 }
 
-func (s * Storage) GetUser(ctx context.Context, username string) (models.User, error) {
-	var user models.User
+func (s * Storage) GetUser(ctx context.Context, user *models.User) (*models.User, error) {
 	args := pgx.NamedArgs{
-		"username": username,
+		"username": user.Username,
 	}
 	err := s.DB.QueryRow(ctx, GetUserCredStmt, args).Scan(&user.Id, &user.Username, &user.PasswordHashed, &user.Role)
 	if err != nil {

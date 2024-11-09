@@ -28,7 +28,7 @@ type (
 	Service interface {
 		// CheckTokenUser(token string) error
 		// CheckRoleUser(token string) (string, error)
-		// LoginUser(cusername string, password string) (*string, error)
+		LoginUser(ctx context.Context, user *models.User) (string, error)
 		RegistrateUser(ctx context.Context, user models.User) (string, error)
 	}
 )
@@ -63,6 +63,22 @@ func (a *AuthServer) Registration(ctx context.Context, req *auth.RegistrationReq
 		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
 	}
 	response := &auth.RegistrationResponse{
+		Token: token,
+	}
+	return response, nil
+}
+
+func (a *AuthServer) Login(ctx context.Context, req *auth.LoginRequest) (*auth.LoginResponse, error) {
+	user := models.User{
+		Username: req.GetUsername(),
+		Password: req.GetPassword(),
+	}
+	token, err := a.Service.LoginUser(ctx, &user)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &auth.LoginResponse{
 		Token: token,
 	}
 	return response, nil

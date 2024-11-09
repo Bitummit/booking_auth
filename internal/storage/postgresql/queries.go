@@ -9,4 +9,7 @@ const (
 	GetUserByName = `
 		SELECT id FROM my_user WHERE username=@username;
 	`
+	GetUserCredStmt = `
+		SELECT id, username, password, role FROM my_user WHERE username=@username;
+	`
 )

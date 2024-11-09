@@ -20,6 +20,7 @@ type Storage struct {
 
 var ErrorNotFound = errors.New("not found")
 var ErrorUserExists = errors.New("user exists")
+var ErrorUserNotExists = errors.New("user not exists")
 
 
 func New(ctx context.Context) (*Storage, error) {
@@ -64,4 +65,20 @@ func (s *Storage) CreateUser(ctx context.Context, user models.User) (int64, erro
 	}
 
 	return id, nil
+}
+
+func (s * Storage) GetUser(ctx context.Context, username string) (models.User, error) {
+	var user models.User
+	args := pgx.NamedArgs{
+		"username": username,
+	}
+	err := s.DB.QueryRow(ctx, GetUserCredStmt, args).Scan(&user.Id, &user.Username, &user.PasswordHashed, &user.Role)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return user, fmt.Errorf("getting user cred: %w", ErrorUserNotExists)
+		}
+		return user, fmt.Errorf("getting user err: %w", err)
+	}
+
+	return user, nil
 }

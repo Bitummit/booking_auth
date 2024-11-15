@@ -17,7 +17,7 @@ type UserClaims struct {
 	ExpiresAt int64
 }
 
-// var ErrorInvalidToken = errors.New("invalid token")
+var ErrorInvalidToken = errors.New("invalid token")
 var ErrorTokenDuration = errors.New("invalid token duration")
 var ErrorSigningToken = errors.New("token signing error")
 var ErrorTokenExpired = errors.New("token expired")
@@ -50,18 +50,19 @@ func NewToken(user models.User) (string, error) {
 	return tokenString, nil
 }
 
-// func ParseToken(tokenString string) (models.User, error) {
-// 	var userClaims UserClaims
-// 	_, err := jwt.ParseWithClaims(tokenString, &userClaims, func(token *jwt.Token) (interface{}, error) {
-//     	return []byte(os.Getenv("SECRET_KEY")), nil
-// 	})
-// 	if err != nil {
-// 		return models.User{}, fmt.Errorf("parsing token: %w", ErrorInvalidToken)
-// 	}
+func ParseToken(tokenString string) (models.User, error) {
+	var userClaims UserClaims
+	_, err := jwt.ParseWithClaims(tokenString, &userClaims, func(token *jwt.Token) (interface{}, error) {
+    	return []byte(os.Getenv("SECRET_KEY")), nil
+	})
+	if err != nil {
+		return models.User{}, fmt.Errorf("parsing token: %w", ErrorInvalidToken)
+	}
 	
-// 	user := models.User{
-// 		Id: userClaims.Id,
-// 		Username: userClaims.Username,
-// 	}
-// 	return user, nil
-// }
+	user := models.User{
+		Id: userClaims.Id,
+		Username: userClaims.Username,
+		Role: userClaims.Role,
+	}
+	return user, nil
+}

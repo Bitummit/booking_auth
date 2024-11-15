@@ -7,7 +7,6 @@ import (
 
 	my_jwt "github.com/Bitummit/booking_auth/internal/jwt"
 	"github.com/Bitummit/booking_auth/internal/models"
-	"github.com/Bitummit/booking_auth/internal/storage/postgresql"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -23,6 +22,8 @@ type Storage interface {
 
 var ErrorHashingPassword = errors.New("error while hashing password")
 var ErrorIncorrectPassword = errors.New("invalid password")
+var ErrorNotAdmin = errors.New("only admin allowed")
+
 
 func New(storage Storage) *Service{
 	return &Service{
@@ -55,9 +56,6 @@ func (s *Service) LoginUser(ctx context.Context, user *models.User) (string, err
 
 	user, err := s.Storage.GetUser(ctx, user)
 	if err != nil {
-		if errors.Is(err, postgresql.ErrorUserNotExists) {
-			return "", fmt.Errorf("login user: %w", err)
-		}
 		return "", fmt.Errorf("login user: %w", err)
 	}
 	err = bcrypt.CompareHashAndPassword(user.PasswordHashed, []byte(user.Password)); if err != nil {
@@ -72,3 +70,37 @@ func (s *Service) LoginUser(ctx context.Context, user *models.User) (string, err
 	return token, nil
 }
 
+func (s *Service) CheckUserRole(ctx context.Context, token string) (string, error) {
+
+	user, err := s.checkUser(ctx, token)
+	if err != nil {
+		return "", fmt.Errorf("%w", err)
+	}
+
+	return user.Role, nil
+}
+
+func (s *Service) CheckIsAdmin(ctx context.Context, token string) error {
+	user, err := s.checkUser(ctx, token)
+	if err != nil {
+		return fmt.Errorf("%w", err)
+	}
+	if user.Role != "admin" {
+		return ErrorNotAdmin
+	}
+
+	return nil
+}
+
+func (s *Service) checkUser(ctx context.Context, token string) (*models.User, error) {
+	user, err := my_jwt.ParseToken(token)
+	if err != nil {
+		return nil, fmt.Errorf("check user token: %w", err)
+	}
+
+	_, err = s.Storage.GetUser(ctx, &user)
+	if err != nil {
+		return nil, fmt.Errorf("check user token: %w", err)
+	}
+	return &user, nil
+}

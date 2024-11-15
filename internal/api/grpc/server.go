@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	my_jwt "github.com/Bitummit/booking_auth/internal/jwt"
 	"github.com/Bitummit/booking_auth/internal/models"
 	authService "github.com/Bitummit/booking_auth/internal/service"
 	"github.com/Bitummit/booking_auth/internal/storage/postgresql"
@@ -27,9 +28,10 @@ type (
 
 	Service interface {
 		// CheckTokenUser(token string) error
-		// CheckRoleUser(token string) (string, error)
+		CheckUserRole(ctx context.Context, token string) (string, error)
 		LoginUser(ctx context.Context, user *models.User) (string, error)
 		RegistrateUser(ctx context.Context, user models.User) (string, error)
+		CheckIsAdmin(ctx context.Context, token string) error
 	}
 )
 
@@ -60,7 +62,7 @@ func (a *AuthServer) Registration(ctx context.Context, req *auth.RegistrationReq
 		if errors.Is(err, postgresql.ErrorUserExists) {
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		}
-		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	response := &auth.RegistrationResponse{
 		Token: token,
@@ -75,11 +77,39 @@ func (a *AuthServer) Login(ctx context.Context, req *auth.LoginRequest) (*auth.L
 	}
 	token, err := a.Service.LoginUser(ctx, &user)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, postgresql.ErrorUserNotExists) || errors.Is(err, authService.ErrorIncorrectPassword){
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	response := &auth.LoginResponse{
 		Token: token,
 	}
 	return response, nil
+}
+
+func (a *AuthServer) CheckRole(ctx context.Context, req *auth.CheckRoleRequest) (*auth.CheckRoleResponse, error) {
+	token := req.GetToken()
+	role, err := a.Service.CheckUserRole(ctx, token)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	response := &auth.CheckRoleResponse{
+		Role: role,
+	}
+	return response, nil
+}
+
+func (a *AuthServer) CheckIsAdmin(ctx context.Context, req *auth.CheckTokenRequest) (*auth.EmptyResponse, error) {
+	token := req.GetToken()
+	if err := a.Service.CheckIsAdmin(ctx, token); err != nil {
+		a.Log.Error("error while login:", logger.Err(err))
+		if errors.Is(err, my_jwt.ErrorTokenDuration) || errors.Is(err, postgresql.ErrorNotFound){
+			return nil, status.Error(codes.InvalidArgument, err.Error())
+		}
+		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
+	}
+	return &auth.EmptyResponse{}, nil
 }

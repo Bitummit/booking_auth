@@ -102,7 +102,7 @@ func (a *AuthServer) CheckRole(ctx context.Context, req *auth.CheckRoleRequest) 
 	return response, nil
 }
 
-func (a *AuthServer) CheckIsAdmin(ctx context.Context, req *auth.CheckTokenRequest) (*auth.EmptyResponse, error) {
+func (a *AuthServer) IsAdmin(ctx context.Context, req *auth.CheckTokenRequest) (*auth.EmptyResponse, error) {
 	token := req.GetToken()
 	if err := a.Service.CheckIsAdmin(ctx, token); err != nil {
 		a.Log.Error("error while login:", logger.Err(err))

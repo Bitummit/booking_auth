@@ -12,4 +12,7 @@ const (
 	GetUserCredStmt = `
 		SELECT id, username, password, role FROM my_user WHERE username=@username;
 	`
+	UpdateUserRoleStmt = `
+		UPDATE my_user SET role=@role WHERE username=@username;
+	`
 )

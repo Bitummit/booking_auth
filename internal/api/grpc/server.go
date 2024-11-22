@@ -32,6 +32,7 @@ type (
 		LoginUser(ctx context.Context, user *models.User) (string, error)
 		RegistrateUser(ctx context.Context, user models.User) (string, error)
 		CheckIsAdmin(ctx context.Context, token string) error
+		UpdateUserRole(ctx context.Context, username, role string) error
 	}
 )
 
@@ -111,5 +112,16 @@ func (a *AuthServer) IsAdmin(ctx context.Context, req *auth.CheckTokenRequest) (
 		}
 		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
 	}
+	return &auth.EmptyResponse{}, nil
+}
+
+func (a *AuthServer) UpdateUserRole(ctx context.Context, req *auth.UpdateUserRoleRequest) (*auth.EmptyResponse, error) {
+	username := req.GetUsername()
+	newRole := req.GetRole()
+	if err := a.Service.UpdateUserRole(ctx, username, newRole); err != nil {
+		a.Log.Error("error while granting new role: ", logger.Err(err))
+		
+		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
+	} 
 	return &auth.EmptyResponse{}, nil
 }

@@ -27,6 +27,7 @@ type AuthClient interface {
 	CheckToken(ctx context.Context, in *CheckTokenRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	CheckRole(ctx context.Context, in *CheckRoleRequest, opts ...grpc.CallOption) (*CheckRoleResponse, error)
 	IsAdmin(ctx context.Context, in *CheckTokenRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
+	UpdateUserRole(ctx context.Context, in *UpdateUserRoleRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 }
 
 type authClient struct {
@@ -82,6 +83,15 @@ func (c *authClient) IsAdmin(ctx context.Context, in *CheckTokenRequest, opts ..
 	return out, nil
 }
 
+func (c *authClient) UpdateUserRole(ctx context.Context, in *UpdateUserRoleRequest, opts ...grpc.CallOption) (*EmptyResponse, error) {
+	out := new(EmptyResponse)
+	err := c.cc.Invoke(ctx, "/Auth/UpdateUserRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServer is the server API for Auth service.
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type AuthServer interface {
 	CheckToken(context.Context, *CheckTokenRequest) (*EmptyResponse, error)
 	CheckRole(context.Context, *CheckRoleRequest) (*CheckRoleResponse, error)
 	IsAdmin(context.Context, *CheckTokenRequest) (*EmptyResponse, error)
+	UpdateUserRole(context.Context, *UpdateUserRoleRequest) (*EmptyResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedAuthServer) CheckRole(context.Context, *CheckRoleRequest) (*C
 }
 func (UnimplementedAuthServer) IsAdmin(context.Context, *CheckTokenRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsAdmin not implemented")
+}
+func (UnimplementedAuthServer) UpdateUserRole(context.Context, *UpdateUserRoleRequest) (*EmptyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserRole not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
@@ -216,6 +230,24 @@ func _Auth_IsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Auth_UpdateUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).UpdateUserRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Auth/UpdateUserRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).UpdateUserRole(ctx, req.(*UpdateUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Auth_ServiceDesc is the grpc.ServiceDesc for Auth service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsAdmin",
 			Handler:    _Auth_IsAdmin_Handler,
+		},
+		{
+			MethodName: "UpdateUserRole",
+			Handler:    _Auth_UpdateUserRole_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

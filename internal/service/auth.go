@@ -17,7 +17,7 @@ type Service struct {
 type Storage interface {
 	CreateUser(ctx context.Context, user models.User) (int64, error)
 	GetUser(ctx context.Context, user *models.User) (*models.User, error)
-	// SetUserRole(ctx context.Context, user models.User) error
+	SetUserRole(ctx context.Context, username, role string) error
 }
 
 var ErrorHashingPassword = errors.New("error while hashing password")
@@ -103,4 +103,11 @@ func (s *Service) checkUser(ctx context.Context, token string) (*models.User, er
 		return nil, fmt.Errorf("check user token: %w", err)
 	}
 	return &user, nil
+}
+
+func (s *Service) UpdateUserRole(ctx context.Context, username, role string) error {
+	if err := s.Storage.SetUserRole(ctx, username, role); err != nil {
+		return fmt.Errorf("updating user role: %w", err)
+	}
+	return nil
 }

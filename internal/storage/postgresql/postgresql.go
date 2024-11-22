@@ -82,10 +82,10 @@ func (s * Storage) GetUser(ctx context.Context, user *models.User) (*models.User
 	return user, nil
 }
 
-func (s * Storage) SetUserRole(ctx context.Context, role string, user *models.User) error {
+func (s * Storage) SetUserRole(ctx context.Context, username, role string) error {
 	args := pgx.NamedArgs{
 		"role": role,
-		"username": user.Username,
+		"username": username,
 	}
 	resp, err := s.DB.Exec(ctx, UpdateUserRoleStmt, args)
 	if err != nil {

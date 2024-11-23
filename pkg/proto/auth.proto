@@ -11,6 +11,8 @@ service Auth {
     rpc CheckRole(CheckRoleRequest) returns (CheckRoleResponse) {}
     rpc IsAdmin(CheckTokenRequest) returns (EmptyResponse) {}
     rpc UpdateUserRole(UpdateUserRoleRequest) returns (EmptyResponse) {}
+    rpc GetUsere(GetUserRequest) returns (GetUserResponse) {}
+
 }
 
 message LoginRequest {
@@ -37,6 +39,18 @@ message CheckRoleRequest {
 message UpdateUserRoleRequest {
     string username = 1 [ json_name = "username" ];
     string role = 2 [ json_name = "role" ];
+}
+
+message GetUserRequest {
+    string token = 1 [ json_name = "token" ];
+}
+
+message GetUserResponse {
+    int64 id = 1 [ json_name = "id"];
+    string username = 2;
+    string firstName = 3;
+    string lastName = 4;
+    string email = 5;
 }
 
 message LoginResponse {

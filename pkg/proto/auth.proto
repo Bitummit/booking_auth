@@ -11,7 +11,7 @@ service Auth {
     rpc CheckRole(CheckRoleRequest) returns (CheckRoleResponse) {}
     rpc IsAdmin(CheckTokenRequest) returns (EmptyResponse) {}
     rpc UpdateUserRole(UpdateUserRoleRequest) returns (EmptyResponse) {}
-    rpc GetUsere(GetUserRequest) returns (GetUserResponse) {}
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 
 }
 

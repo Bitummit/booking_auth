@@ -33,6 +33,7 @@ type (
 		RegistrateUser(ctx context.Context, user models.User) (string, error)
 		CheckIsAdmin(ctx context.Context, token string) error
 		UpdateUserRole(ctx context.Context, username, role string) error
+		GetUserFromToken(ctx context.Context, token string) (*models.User, error)
 	}
 )
 
@@ -124,4 +125,23 @@ func (a *AuthServer) UpdateUserRole(ctx context.Context, req *auth.UpdateUserRol
 		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
 	} 
 	return &auth.EmptyResponse{}, nil
+}
+
+func (a *AuthServer) GetUser(ctx context.Context, req *auth.GetUserRequest) (*auth.GetUserResponse, error) {
+	token := req.GetToken()
+	user, err := a.Service.GetUserFromToken(ctx, token)
+	if err != nil {
+		a.Log.Error("error getting user: ", logger.Err(err))
+
+		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
+	}
+
+	res := auth.GetUserResponse{
+		Id: user.Id,
+		Username: user.Username,
+		FirstName: user.FirstName,
+		LastName: user.LastName,
+		Email: user.Email,
+	}
+	return &res, nil
 }

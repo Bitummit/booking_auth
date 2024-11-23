@@ -72,7 +72,7 @@ func (s *Service) LoginUser(ctx context.Context, user *models.User) (string, err
 
 func (s *Service) CheckUserRole(ctx context.Context, token string) (string, error) {
 
-	user, err := s.checkUser(ctx, token)
+	user, err := s.GetUserFromToken(ctx, token)
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}
@@ -81,7 +81,7 @@ func (s *Service) CheckUserRole(ctx context.Context, token string) (string, erro
 }
 
 func (s *Service) CheckIsAdmin(ctx context.Context, token string) error {
-	user, err := s.checkUser(ctx, token)
+	user, err := s.GetUserFromToken(ctx, token)
 	if err != nil {
 		return fmt.Errorf("%w", err)
 	}
@@ -92,7 +92,7 @@ func (s *Service) CheckIsAdmin(ctx context.Context, token string) error {
 	return nil
 }
 
-func (s *Service) checkUser(ctx context.Context, token string) (*models.User, error) {
+func (s *Service) GetUserFromToken(ctx context.Context, token string) (*models.User, error) {
 	user, err := my_jwt.ParseToken(token)
 	if err != nil {
 		return nil, fmt.Errorf("check user token: %w", err)

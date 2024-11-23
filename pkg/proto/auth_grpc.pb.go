@@ -25,7 +25,7 @@ const (
 	Auth_CheckRole_FullMethodName      = "/Auth/CheckRole"
 	Auth_IsAdmin_FullMethodName        = "/Auth/IsAdmin"
 	Auth_UpdateUserRole_FullMethodName = "/Auth/UpdateUserRole"
-	Auth_GetUsere_FullMethodName       = "/Auth/GetUsere"
+	Auth_GetUser_FullMethodName        = "/Auth/GetUser"
 )
 
 // AuthClient is the client API for Auth service.
@@ -38,7 +38,7 @@ type AuthClient interface {
 	CheckRole(ctx context.Context, in *CheckRoleRequest, opts ...grpc.CallOption) (*CheckRoleResponse, error)
 	IsAdmin(ctx context.Context, in *CheckTokenRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
 	UpdateUserRole(ctx context.Context, in *UpdateUserRoleRequest, opts ...grpc.CallOption) (*EmptyResponse, error)
-	GetUsere(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 }
 
 type authClient struct {
@@ -109,10 +109,10 @@ func (c *authClient) UpdateUserRole(ctx context.Context, in *UpdateUserRoleReque
 	return out, nil
 }
 
-func (c *authClient) GetUsere(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+func (c *authClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, Auth_GetUsere_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Auth_GetUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ type AuthServer interface {
 	CheckRole(context.Context, *CheckRoleRequest) (*CheckRoleResponse, error)
 	IsAdmin(context.Context, *CheckTokenRequest) (*EmptyResponse, error)
 	UpdateUserRole(context.Context, *UpdateUserRoleRequest) (*EmptyResponse, error)
-	GetUsere(context.Context, *GetUserRequest) (*GetUserResponse, error)
+	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -158,8 +158,8 @@ func (UnimplementedAuthServer) IsAdmin(context.Context, *CheckTokenRequest) (*Em
 func (UnimplementedAuthServer) UpdateUserRole(context.Context, *UpdateUserRoleRequest) (*EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserRole not implemented")
 }
-func (UnimplementedAuthServer) GetUsere(context.Context, *GetUserRequest) (*GetUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUsere not implemented")
+func (UnimplementedAuthServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 func (UnimplementedAuthServer) testEmbeddedByValue()              {}
@@ -290,20 +290,20 @@ func _Auth_UpdateUserRole_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_GetUsere_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Auth_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).GetUsere(ctx, in)
+		return srv.(AuthServer).GetUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Auth_GetUsere_FullMethodName,
+		FullMethod: Auth_GetUser_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).GetUsere(ctx, req.(*GetUserRequest))
+		return srv.(AuthServer).GetUser(ctx, req.(*GetUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -340,8 +340,8 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_UpdateUserRole_Handler,
 		},
 		{
-			MethodName: "GetUsere",
-			Handler:    _Auth_GetUsere_Handler,
+			MethodName: "GetUser",
+			Handler:    _Auth_GetUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

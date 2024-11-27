@@ -129,11 +129,15 @@ func (a *AuthServer) UpdateUserRole(ctx context.Context, req *auth.UpdateUserRol
 
 func (a *AuthServer) GetUser(ctx context.Context, req *auth.GetUserRequest) (*auth.GetUserResponse, error) {
 	token := req.GetToken()
+	if token == "" {
+		a.Log.Info("anon user")
+		return nil, nil
+	}
 	user, err := a.Service.GetUserFromToken(ctx, token)
 	if err != nil {
 		a.Log.Error("error getting user: ", logger.Err(err))
 
-		return nil, status.Error(codes.Internal, fmt.Sprintf("%v", err))
+		return nil, status.Error(codes.NotFound, fmt.Sprintf("%v", err))
 	}
 
 	res := auth.GetUserResponse{

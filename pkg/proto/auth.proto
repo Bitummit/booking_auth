@@ -10,6 +10,7 @@ service Auth {
     rpc CheckToken(CheckTokenRequest) returns (EmptyResponse) {}
     rpc CheckRole(CheckRoleRequest) returns (CheckRoleResponse) {}
     rpc IsAdmin(CheckTokenRequest) returns (EmptyResponse) {}
+    rpc IsManager(CheckTokenRequest) returns (EmptyResponse) {}
     rpc UpdateUserRole(UpdateUserRoleRequest) returns (EmptyResponse) {}
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 

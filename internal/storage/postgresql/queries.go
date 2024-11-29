@@ -10,7 +10,7 @@ const (
 		SELECT id FROM my_user WHERE username=@username;
 	`
 	GetUserCredStmt = `
-		SELECT id, username, password, role FROM my_user WHERE username=@username;
+		SELECT id, username, first_name, last_name, email, password, role FROM my_user WHERE username=@username;
 	`
 	UpdateUserRoleStmt = `
 		UPDATE my_user SET role=@role WHERE username=@username;

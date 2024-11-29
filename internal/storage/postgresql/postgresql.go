@@ -71,7 +71,7 @@ func (s * Storage) GetUser(ctx context.Context, user *models.User) (*models.User
 	args := pgx.NamedArgs{
 		"username": user.Username,
 	}
-	err := s.DB.QueryRow(ctx, GetUserCredStmt, args).Scan(&user.Id, &user.Username, &user.PasswordHashed, &user.Role)
+	err := s.DB.QueryRow(ctx, GetUserCredStmt, args).Scan(&user.Id, &user.Username, &user.FirstName, &user.LastName, &user.Email, &user.PasswordHashed, &user.Role)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return user, fmt.Errorf("getting user cred: %w", ErrorUserNotExists)

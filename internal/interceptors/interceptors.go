@@ -9,8 +9,8 @@ import (
 
 func UnaryLogRequest(log *slog.Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		log.Info("request: %v", slog.Attr{
-			Key: "info",
+		log.Info("got new request", slog.Attr{
+			Key: "endpoint",
 			Value: slog.StringValue(info.FullMethod),
 		})
 

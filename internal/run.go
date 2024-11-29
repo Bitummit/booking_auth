@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	my_grpc "github.com/Bitummit/booking_auth/internal/api/grpc"
+	"github.com/Bitummit/booking_auth/internal/interceptors"
 	"github.com/Bitummit/booking_auth/internal/storage/postgresql"
 	"github.com/Bitummit/booking_auth/pkg/config"
 	"github.com/Bitummit/booking_auth/pkg/logger"
@@ -51,9 +52,9 @@ func startServer(ctx context.Context, wg *sync.WaitGroup, server *my_grpc.AuthSe
 		server.Log.Error("failed to listen", logger.Err(err))
 	}
 	opts := []grpc.ServerOption{
-		// grpc.ChainUnaryInterceptor(
-		// 	interceptors.UnaryLogRequest(server.Log),
-		// ),
+		grpc.ChainUnaryInterceptor(
+			interceptors.UnaryLogRequest(server.Log),
+		),
 	}
 	grpcServer := grpc.NewServer(opts...)
 	auth.RegisterAuthServer(grpcServer, server)

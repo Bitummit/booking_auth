@@ -13,7 +13,6 @@ import (
 type UserClaims struct {
 	Id int64
 	Username string
-	Role string
 	ExpiresAt int64
 }
 
@@ -38,7 +37,6 @@ func NewToken(user models.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, UserClaims{
 		Id: user.Id,
 		Username: user.Username,
-		Role: user.Role,
 		ExpiresAt: time.Now().Add(ttl).Unix(),
 	})
 
@@ -62,7 +60,6 @@ func ParseToken(tokenString string) (models.User, error) {
 	user := models.User{
 		Id: userClaims.Id,
 		Username: userClaims.Username,
-		Role: userClaims.Role,
 	}
 	return user, nil
 }

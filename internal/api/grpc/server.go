@@ -146,6 +146,7 @@ func (a *AuthServer) GetUser(ctx context.Context, req *auth.GetUserRequest) (*au
 		FirstName: user.FirstName,
 		LastName: user.LastName,
 		Email: user.Email,
+		Role: user.Role,
 	}
 	return &res, nil
 }
